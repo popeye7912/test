@@ -1,0 +1,92 @@
+spring:
+  application:
+    name: popeye-test
+  profiles:
+    active: local
+    group:
+      local: common, local
+      dev: common, dev
+
+---
+spring:
+  config:
+    activate:
+      on-profile: common
+  datasource:
+    url: ${DB_HOST}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 5000
+      validation-timeout: 3000
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+server:
+  servlet:
+    context-path: /popeye
+  shutdown: graceful
+  port: 8080
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    multiple-result-sets-enabled: true
+    call-setters-on-nulls: true
+
+springdoc:
+  use-fqn: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  pattern:
+    file: "[%d{HH:mm:ss.SSS}][%-5level][%logger.%method:line%line] - %msg%n"
+    console: "[%-level] [%thread] [%logger{0}:%line] - %msg%n"
+    rolling-file-name: "/logs/abc.%d{yyyy-MM-dd}.%i"
+  file:
+    path: logs/
+#    name: /logs/abc.log
+    max-history: 30
+  level:
+    root: INFO
+    org:
+      springframework: INFO
+    jdbc:
+      audit: OFF
+      sqlonfy: OFF
+      sqltiming: INFO
+      resultset: OFF
+      resultsettable: INFO
+      connection: OFF
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  h2:
+    console:
+      enabled: true  # H2 Console? ???? ?? (H2 Console? H2 Database? UI? ????? ??)
+      path: /h2-console  # H2 Console? Path
+    # Database Setting Info (Database? H2? ???? ?? H2?? ?? ??)
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:h2:~/popeye  # H2 ?? ??
+    username: sa  # H2 ?? ? ??? username ?? (??? ??? ??)
+    password:  # H2 ?? ? ??? password ?? (??? ??? ??)
+  security:
+    user:
+      name: test
+      password: test
+      roles: USER, ADMIN
